@@ -5,8 +5,7 @@ enum TokenType {
     OPERATOR,
     OPEN_PAREN,
     CLOSE_PAREN,
-    VARIABLE,
-    FUNCTION
+    IDENTIFIER
 };
 
 enum class OperatorType : char {
@@ -16,6 +15,12 @@ enum class OperatorType : char {
     DIV = '/',
     POW = '^',
     ASSIGN = '='
+};
+
+enum IdentifierType {
+    VARIABLE,
+    FUNCTION,
+    CONSTANT
 };
 
 class Token {
@@ -35,14 +40,18 @@ class Operator : public Token {
     OperatorType oper;
     int precedence; // 1,2, or 3
     bool LH; // left-associative; true when left-assoc, false when right-assoc
-
 };
 
 class Paren : public Token {
     public:
 };
 
-class Variable : public Token {
+class Identifier : public Token {
+    public: 
+
+};
+
+class Variable : public Identifier {
     public:
     std::string type;
 };
@@ -57,9 +66,8 @@ class Vector : public Variable {
     std::shared_ptr<std::vector<double>> value;
 };
 
-class Function : public Token {
+class Function : public Identifier {
     public:
     int arity;
 };
-
 
