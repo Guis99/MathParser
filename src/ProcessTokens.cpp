@@ -1,5 +1,11 @@
 #include "..\include\MathParser.hpp"
 
+namespace MathParser {
+    std::unordered_map<std::string, QuickArray> constants;
+    std::unordered_map<std::string, double> functions;
+    std::unordered_map<std::string, QuickArray> variables;
+}
+
 std::vector<double> MathParser::EvalExpression(std::string inputString, std::string vars) {
     
     std::vector<double> out;
@@ -21,7 +27,8 @@ std::vector<double> MathParser::EvalExpression(std::string inputString, std::str
 void MathParser::TokenizeString(std::string &inputString, std::vector<std::shared_ptr<Token>> &tokens, std::string vars) {
     // std::vector<std::shared_ptr<Token>> tokens;
 
-    std::string operatorPattern = "[-+*/^=]";
+    std::string operatorPattern = "[-+*/^]";
+    std::string stringPattern = "[a-zA-Z]";
     std::string variablePattern = vars;
     std::string mathPattern = "sin|cos|tan";
     std::string regexString = R"((\d+)|()" + 
@@ -45,16 +52,16 @@ void MathParser::TokenizeString(std::string &inputString, std::vector<std::share
                     case 1: {
                         Number *number = new Number();
                         std::shared_ptr<Number> token(number);
+                        token->type = TokenType::NUMBER;
                         token->name = val;
-                        token->type = TokenType::NUMBER; 
                         token->value = std::stod(val);
                         tokens.push_back(token);
                         break;
                     }
                     case 2: {
-                        Operator *operatorT = new Operator();
-                        std::shared_ptr<Operator> token(operatorT);
-                        token->type = TokenType::OPERATOR; 
+                        Operator *oper = new Operator();
+                        std::shared_ptr<Operator> token(oper);
+                        token->type = TokenType::OPERATOR;
                         token->name = val;
                         if (val == "+") {
                             token->oper = OperatorType::PLUS;
@@ -91,7 +98,7 @@ void MathParser::TokenizeString(std::string &inputString, std::vector<std::share
                     case 3: {
                         Paren *paren = new Paren();
                         std::shared_ptr<Paren> token(paren);
-                        token->type = TokenType::OPEN_PAREN; 
+                        token->type = TokenType::OPEN_PAREN;
                         token->name = val;
                         tokens.push_back(token);
                         break;
@@ -99,24 +106,23 @@ void MathParser::TokenizeString(std::string &inputString, std::vector<std::share
                     case 4: {
                         Paren *paren = new Paren();
                         std::shared_ptr<Paren> token(paren);
-                        token->type = TokenType::CLOSE_PAREN; 
+                        token->type = TokenType::CLOSE_PAREN;
                         token->name = val;
                         tokens.push_back(token);
                         break;
                     }
                     case 5: {
-                        Variable *variable = new Variable();
-                        std::shared_ptr<Variable> token(variable);
-                        token->type = VARIABLE; 
+                        Identifier *identifier = new Identifier();
+                        std::shared_ptr<Identifier> token(identifier);
+                        token->type = TokenType::IDENTIFIER;
                         token->name = val;
                         tokens.push_back(token);
                         break;
                     }
-
                     case 6: {
-                        Function *func = new Function();
-                        std::shared_ptr<Function> token(func);
-                        token->type = FUNCTION; 
+                        Identifier *identifier = new Identifier();
+                        std::shared_ptr<Identifier> token(identifier);
+                        token->type = TokenType::IDENTIFIER;
                         token->name = val;
                         tokens.push_back(token);
                         break;
@@ -133,20 +139,17 @@ std::vector<std::shared_ptr<Token>> MathParser::ShuntingYard(std::vector<std::sh
     std::stack<std::shared_ptr<Token>> opStack;
     int tok = 0;
     for (auto token : tokens) {
+        std::cout<<tok++<<", "<<token->name<<", "<<token->type<<std::endl;
         switch (token->type) {
-            case TokenType::NUMBER: 
+            case TokenType::NUMBER: {
                 RpnVec.push_back(token);
                 break;
-            case TokenType::VARIABLE: 
-                RpnVec.push_back(token);
-                break;
-            case TokenType::OPEN_PAREN: 
+            }
+            case TokenType::OPEN_PAREN: {
                 opStack.push(token);
                 break;
-            case TokenType::FUNCTION: 
-                opStack.push(token);
-                break;
-            case TokenType::OPERATOR:
+            }
+            case TokenType::OPERATOR: {
                 while (!opStack.empty() && opStack.top()->type == TokenType::OPERATOR) { 
                     std::shared_ptr<Operator> o1 = std::dynamic_pointer_cast<Operator>(token);
                     std::shared_ptr<Operator> o2 = std::dynamic_pointer_cast<Operator>(opStack.top()); 
@@ -158,20 +161,57 @@ std::vector<std::shared_ptr<Token>> MathParser::ShuntingYard(std::vector<std::sh
                     else break;
                 }
                 opStack.push(token);
-                break;    
-            case CLOSE_PAREN:
+                break;
+            }
+            case TokenType::IDENTIFIER: {
+                std::shared_ptr<Identifier> identifier = std::dynamic_pointer_cast<Identifier>(token);
+                std::string idName = identifier->name;
+                auto map = MathParser::functions;
+                if (MathParser::functions.find(idName) != MathParser::functions.end()) {
+                    identifier->idType = IdentifierType::FUNCTION;
+                    opStack.push(identifier);
+                    break;  
+                }
+                else if (MathParser::variables.find(idName) != MathParser::variables.end()) {
+                    identifier->idType = IdentifierType::VARIABLE;
+                    RpnVec.push_back(identifier);
+                    break;
+                }
+                else if (MathParser::constants.find(idName) != MathParser::constants.end()) {
+                    std::shared_ptr<Number> number = std::dynamic_pointer_cast<Number>(identifier);
+                    identifier->idType = IdentifierType::CONSTANT;
+                    RpnVec.push_back(identifier);
+                    break;
+                }
+                else {
+                    throw MathParser::UnknownIdentifierException("Variable or function does not exist");
+                }
+                break;
+            }
+            case TokenType::CLOSE_PAREN: {
+                std::cout<<"here1"<<std::endl;
                 while (!opStack.empty() && 
                     (opStack.top()->type != TokenType::OPEN_PAREN)) {
                     RpnVec.push_back(opStack.top());
                     opStack.pop();
                 }
+                std::cout<<"here2"<<std::endl;
                 opStack.pop();
-                if (!opStack.empty() && opStack.top()->type == TokenType::FUNCTION) {
-                    RpnVec.push_back(opStack.top());
-                    opStack.pop();
+                std::cout<<"here3"<<std::endl;
+                if (!opStack.empty() && opStack.top()->type == TokenType::IDENTIFIER) {
+                    std::cout<<"here4"<<std::endl;
+                    std::shared_ptr<Identifier> identifier = std::dynamic_pointer_cast<Identifier>(opStack.top());
+                    if (identifier->idType == IdentifierType::FUNCTION) {
+                        std::cout<<"here5"<<std::endl;
+                        RpnVec.push_back(opStack.top());
+                        std::cout<<"here6"<<std::endl;
+                        opStack.pop();
+                    }
                 }
-                break;
+            }
+                break; 
         }  
+        std::cout<<tok<<", "<<token->name<<", "<<token->type<<std::endl;
     }
 
     while (!opStack.empty()) {

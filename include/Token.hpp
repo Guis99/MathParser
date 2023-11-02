@@ -1,20 +1,22 @@
 #include "common.hpp"
 
+#pragma once
+
 enum TokenType {
     NUMBER,
     OPERATOR,
+    IDENTIFIER,
     OPEN_PAREN,
     CLOSE_PAREN,
-    IDENTIFIER
+    ASSIGN
 };
 
-enum class OperatorType : char {
-    PLUS = '+',
-    MINUS = '-',
-    MULT = '*',
-    DIV = '/',
-    POW = '^',
-    ASSIGN = '='
+enum OperatorType {
+    PLUS,
+    MINUS,
+    MULT,
+    DIV,
+    POW,
 };
 
 enum IdentifierType {
@@ -32,11 +34,13 @@ class Token {
 
 class Number : public Token {
     public:
+    // TokenType type = TokenType::NUMBER;
     double value;
 };
 
 class Operator : public Token {
     public:
+    // TokenType type = TokenType::OPERATOR;
     OperatorType oper;
     int precedence; // 1,2, or 3
     bool LH; // left-associative; true when left-assoc, false when right-assoc
@@ -46,28 +50,29 @@ class Paren : public Token {
     public:
 };
 
+class Assign : public Token {
+    public:
+};
+
 class Identifier : public Token {
     public: 
-
+    // TokenType type = TokenType::IDENTIFIER;
+    IdentifierType idType;
 };
 
 class Variable : public Identifier {
     public:
-    std::string type;
-};
-
-class Scalar : public Variable {
-    public:
-    std::shared_ptr<double> contents;
-};
-
-class Vector : public Variable {
-    public:
-    std::shared_ptr<std::vector<double>> value;
+    IdentifierType idType = IdentifierType::VARIABLE;
 };
 
 class Function : public Identifier {
     public:
+    IdentifierType idType = IdentifierType::FUNCTION;
     int arity;
+};
+
+class Constant : public Identifier {
+    public:
+    IdentifierType idType = IdentifierType::CONSTANT;
 };
 

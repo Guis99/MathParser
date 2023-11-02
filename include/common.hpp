@@ -11,3 +11,8 @@
 #include <math.h>
 
 #pragma once
+
+namespace MathParser {
+    
+
+}

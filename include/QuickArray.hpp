@@ -1,5 +1,8 @@
 #include "common.hpp"
 
+#ifndef QUICKARRAY
+#define QUICKARRAY
+
 namespace MathParser {
 
     class QuickArray : public std::vector<double> {
@@ -17,7 +20,7 @@ namespace MathParser {
         QuickArray operator/(const QuickArray& other);
         QuickArray operator^(const QuickArray& other);
     };
-
+    
     class IncompatibleArraySizesException : public std::exception {
         public:
             IncompatibleArraySizesException(const std::string& message) : message(message) {}
@@ -31,3 +34,5 @@ namespace MathParser {
             std::string message;
     };
 }
+
+#endif
