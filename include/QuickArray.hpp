@@ -5,10 +5,36 @@
 
 namespace MathParser {
 
-    class QuickArray : public std::vector<double> {
+    class QuickArray {
         public:
-        // QuickArray(size_t size, double value) : std::vector<double>(size, value) {};
-        using std::vector<double>::vector;
+        //Constructors
+        QuickArray() {};
+
+        QuickArray(std::vector<double> data) {
+            this->data = data;
+        }
+
+        QuickArray(double data) {
+            this->data = {data};
+        }
+
+        QuickArray(std::initializer_list<double> values) : data(values) {};
+
+        QuickArray(size_t size, double value) : data(size, value) {};
+
+        // std::vector methods I want
+        size_t size() {
+            return data.size();
+        };
+
+        void reserve(size_t newCapacity) {
+            data.reserve(newCapacity);
+        }
+
+        void push_back(double newElement) {
+            data.push_back(newElement);
+        }
+
 
         void print();
 
@@ -19,8 +45,13 @@ namespace MathParser {
         QuickArray operator*(const QuickArray& other);
         QuickArray operator/(const QuickArray& other);
         QuickArray operator^(const QuickArray& other);
+        double operator[](size_t idx) const;
+
+        private:
+        std::vector<double> data;
+
     };
-    
+
     class IncompatibleArraySizesException : public std::exception {
         public:
             IncompatibleArraySizesException(const std::string& message) : message(message) {}

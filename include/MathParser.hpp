@@ -11,16 +11,20 @@ namespace MathParser {
     extern std::unordered_map<std::string, QuickArray> constants;
     extern std::unordered_map<std::string, double> functions;
     extern std::unordered_map<std::string, QuickArray> variables;
-    extern std::unordered_map<std::string, std::function<QuickArray(QuickArray, QuickArray)>> operators;
+    extern std::unordered_map<std::string, std::function<QuickArray(const QuickArray, const QuickArray)>> operators;
 
     // Token processing - ProcessTokens.cpp
-    std::vector<double> EvalExpression(std::string inputString, std::string vars);
-    void TokenizeString(std::string &inputString, std::vector<std::shared_ptr<Token>> &tokens, std::string vars);    
-    std::vector<std::shared_ptr<Token>> ShuntingYard(std::vector<std::shared_ptr<Token>> &tokens);
+    void TokenizeString(std::string &inputString, std::vector<std::shared_ptr<Token>> &tokens, bool &isAssignment, size_t &stopIdx);    
+    std::vector<std::shared_ptr<Token>> ShuntingYard(const std::vector<std::shared_ptr<Token>> &tokens);
+    std::string GetCurrentVariables();
 
     // Evaluate intermediate representation - EvalGenCode.cpp
-    std::vector<MathParser::QuickArray> EvalReversePolishToks(std::vector<std::shared_ptr<Token>> &tokens);
-    void MathParser::InitMaps();
+    QuickArray ParseText(std::string inputString);
+    QuickArray EvalExpression(std::string inputString);
+    std::vector<MathParser::QuickArray> EvalReversePolishToks(const std::vector<std::shared_ptr<Token>> &tokens);
+    void SetVariable(std::string variableName, const QuickArray &variableValue);
+    void SetVariable(std::string variableName, const QuickArray &&variableValue);
+    void InitMaps();
 
     // Exceptions
     class UnknownIdentifierException : public std::exception {

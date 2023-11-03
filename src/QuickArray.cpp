@@ -5,10 +5,10 @@ using namespace MathParser;
 void QuickArray::print() {
     for (int i=0; i<this->size(); i++) {
         if (i < this->size() - 1) {
-            std::cout<<*(this->data()+i)<<", ";
+            std::cout<<*(this->data.data()+i)<<", ";
         }
         else {
-            std::cout<<*(this->data()+i)<<std::endl;
+            std::cout<<*(this->data.data()+i)<<std::endl;
         }
     }
 }
@@ -22,7 +22,7 @@ QuickArray QuickArray::applyBinaryOp(std::function<QuickArray(QuickArray, QuickA
     }
 
     else if (s1 == 1) {
-        QuickArray expandedArray(s2, *(this->data()));
+        QuickArray expandedArray(s2, *(this->data.data()));
         return op(expandedArray, other);
     }
 
@@ -84,5 +84,9 @@ QuickArray QuickArray::operator^(const QuickArray& other) {
         result.push_back(std::pow((*this)[i], other[i]));
     }
     return result;
+}
+
+double QuickArray::operator[](size_t idx) const {
+    return data[idx];
 }
 

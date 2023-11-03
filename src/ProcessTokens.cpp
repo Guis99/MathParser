@@ -6,55 +6,61 @@ namespace MathParser {
     std::unordered_map<std::string, QuickArray> variables;
 }
 
-std::vector<double> MathParser::EvalExpression(std::string inputString, std::string vars) {
-    
-    std::vector<double> out;
-    std::vector<std::shared_ptr<Token>> tokens;
-    MathParser::TokenizeString(inputString, tokens, vars);
-    for (auto token : tokens) {
-        std::cout<<token->name<<","<<token->type<<std::endl;
-    }
+std::string MathParser::GetCurrentVariables() {
+    std::string out;
+    auto length = MathParser::variables.size();
+    auto it = MathParser::variables.begin();
 
-    std::cout<<tokens.size()<<std::endl;
-    std::cout<<"-----------"<<std::endl;
-    auto parsedTokens = MathParser::ShuntingYard(tokens);
-    for (auto token : parsedTokens) {
-        std::cout<<token->name<<std::endl;
+    for (int i=0; i<length-1; i++) {
+        out += it->first + "|";
+        it++;
     }
+    out += it->first;
+
     return out;
 }
 
-void MathParser::TokenizeString(std::string &inputString, std::vector<std::shared_ptr<Token>> &tokens, std::string vars) {
+void MathParser::TokenizeString(std::string &inputString, std::vector<std::shared_ptr<Token>> &tokens, bool &isAssignment, size_t &stopIdx) {
     // std::vector<std::shared_ptr<Token>> tokens;
 
     std::string operatorPattern = "[-+*/^]";
-    std::string stringPattern = "[a-zA-Z]";
-    std::string variablePattern = vars;
+    std::string stringPattern = "[a-zA-Z]+";
+    std::string variablePattern = MathParser::GetCurrentVariables();
     std::string mathPattern = "sin|cos|tan";
+    std::string assignPattern = "=";
+    std::string angleBracketPattern = "<|>";
     std::string regexString = R"((\d+)|()" + 
                                 operatorPattern +
                                  R"()|(\()|(\))|()" + 
                                 variablePattern + R"()|()" + 
-                                mathPattern + R"())";
+                                mathPattern + R"()|()" + 
+                                assignPattern + R"()|()" +
+                                angleBracketPattern + R"()|()" +
+                                stringPattern + R"())";
     
-    std::cout<<regexString<<std::endl;
+    // std::cout<<regexString<<std::endl;
     std::regex regexPattern(regexString);
     std::smatch match;
 
     auto pos = inputString.cbegin();
-    int tok = 0;
+    size_t currIdx = 0;
     while (std::regex_search(pos, inputString.cend(), match, regexPattern)) {
-        tok++;
         for (size_t i = 1; i < match.size(); ++i) {
             if (!match[i].str().empty()) {
                 std::string val = match[i].str();
+                // std::cout<<val<<", "<<i<<"|"<<std::endl;
                 switch (i) {
                     case 1: {
+                        // Initialize smart pointer to number token
                         Number *number = new Number();
                         std::shared_ptr<Number> token(number);
+                        // Initialize smart pointer to QuickArray
+                        QuickArray *QA = new MathParser::QuickArray(std::stod(val));
+                        std::shared_ptr<MathParser::QuickArray> QuickArrayPtr(QA);
+                        // Set token attributes
                         token->type = TokenType::NUMBER;
                         token->name = val;
-                        token->value = std::stod(val);
+                        token->value = QuickArrayPtr;
                         tokens.push_back(token);
                         break;
                     }
@@ -127,19 +133,49 @@ void MathParser::TokenizeString(std::string &inputString, std::vector<std::share
                         tokens.push_back(token);
                         break;
                     }
+                    case 7: {
+                        Token *tok = new Token();
+                        std::shared_ptr<Token> token(tok);
+                        token->type = TokenType::ASSIGN;
+                        token->name = val;
+                        tokens.push_back(token);
+                        isAssignment = true;
+                        // std::cout<<token->name<<"," <<currIdx<<", "<<stopIdx<<std::endl;
+                        stopIdx = currIdx;
+                        // std::cout<<currIdx<<", "<<stopIdx<<std::endl;
+                        break;
+                    }
+                    case 8: {
+                        Token *tok = new Token();
+                        std::shared_ptr<Token> token(tok);
+                        token->type = val == "<" ? TokenType::OPEN_ANGLE : TokenType::CLOSE_ANGLE;
+                        token->name = val;
+                        tokens.push_back(token);
+                        break;
+                    }
+                    case 9: {
+                        Identifier *identifier = new Identifier();
+                        std::shared_ptr<Identifier> token(identifier);
+                        token->type = TokenType::IDENTIFIER;
+                        token->name = val;
+                        tokens.push_back(token);
+                        break;
+                    }
                 }
             }
         }
         pos = match.suffix().first;
+        currIdx++;
     }
 }
 
-std::vector<std::shared_ptr<Token>> MathParser::ShuntingYard(std::vector<std::shared_ptr<Token>> &tokens) {
+std::vector<std::shared_ptr<Token>> MathParser::ShuntingYard(const std::vector<std::shared_ptr<Token>> &tokens) {
     std::vector<std::shared_ptr<Token>> RpnVec; RpnVec.reserve(tokens.size());
     std::stack<std::shared_ptr<Token>> opStack;
     int tok = 0;
-    for (auto token : tokens) {
-        std::cout<<tok++<<", "<<token->name<<", "<<token->type<<std::endl;
+    for (int i=0; i<tokens.size(); i++) {
+        auto token = tokens[i];
+        // std::cout<<tok++<<", "<<token->name<<", "<<token->type<<std::endl;
         switch (token->type) {
             case TokenType::NUMBER: {
                 RpnVec.push_back(token);
@@ -189,29 +225,39 @@ std::vector<std::shared_ptr<Token>> MathParser::ShuntingYard(std::vector<std::sh
                 break;
             }
             case TokenType::CLOSE_PAREN: {
-                std::cout<<"here1"<<std::endl;
                 while (!opStack.empty() && 
                     (opStack.top()->type != TokenType::OPEN_PAREN)) {
                     RpnVec.push_back(opStack.top());
                     opStack.pop();
                 }
-                std::cout<<"here2"<<std::endl;
                 opStack.pop();
-                std::cout<<"here3"<<std::endl;
                 if (!opStack.empty() && opStack.top()->type == TokenType::IDENTIFIER) {
-                    std::cout<<"here4"<<std::endl;
                     std::shared_ptr<Identifier> identifier = std::dynamic_pointer_cast<Identifier>(opStack.top());
                     if (identifier->idType == IdentifierType::FUNCTION) {
-                        std::cout<<"here5"<<std::endl;
                         RpnVec.push_back(opStack.top());
-                        std::cout<<"here6"<<std::endl;
                         opStack.pop();
                     }
                 }
+                break;
+            } 
+            case TokenType::OPEN_ANGLE: {
+                i++;
+                // Create number token
+                Number *number = new Number();
+                std::shared_ptr<Number> token(number);
+                // Create QuickArray
+                QuickArray *QA = new MathParser::QuickArray();
+                std::shared_ptr<MathParser::QuickArray> QuickArrayPtr(QA);
+                while (tokens[i]->type != CLOSE_ANGLE) {
+                    QuickArrayPtr->push_back(std::stod(tokens[i]->name));
+                    i++;
+                }
+                token->value = QuickArrayPtr;
+                token->name = "QAConstruct";
+                RpnVec.push_back(token);
             }
-                break; 
         }  
-        std::cout<<tok<<", "<<token->name<<", "<<token->type<<std::endl;
+        // std::cout<<tok<<", "<<token->name<<", "<<token->type<<std::endl;
     }
 
     while (!opStack.empty()) {

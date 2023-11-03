@@ -1,4 +1,5 @@
 #include "common.hpp"
+#include "QuickArray.hpp"
 
 #pragma once
 
@@ -8,7 +9,9 @@ enum TokenType {
     IDENTIFIER,
     OPEN_PAREN,
     CLOSE_PAREN,
-    ASSIGN
+    ASSIGN,
+    CLOSE_ANGLE,
+    OPEN_ANGLE
 };
 
 enum OperatorType {
@@ -35,7 +38,7 @@ class Token {
 class Number : public Token {
     public:
     // TokenType type = TokenType::NUMBER;
-    double value;
+    std::shared_ptr<MathParser::QuickArray> value;
 };
 
 class Operator : public Token {
@@ -51,6 +54,10 @@ class Paren : public Token {
 };
 
 class Assign : public Token {
+    public:
+};
+
+class AngleBracket : public Token {
     public:
 };
 

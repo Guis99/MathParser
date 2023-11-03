@@ -12,11 +12,15 @@ int main() {
     }
 
     QuickArray arr2(1.2);
-    QuickArray arr3 = {1,2,3};
+    std::vector<double> v1 = {1,2,3};
+    QuickArray arr3(v1);
+
+    QuickArray reparr(10,2);
 
     arr1.print();
     arr2.print();
     arr3.print();
+    reparr.print();
 
     // Do operations on QA
 
@@ -58,5 +62,5 @@ int main() {
     sum2.print();
     sum3.print();
 
-    
+
 }
