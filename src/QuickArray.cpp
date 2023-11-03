@@ -8,7 +8,7 @@ void QuickArray::print() {
             std::cout<<*(this->data.data()+i)<<", ";
         }
         else {
-            std::cout<<*(this->data.data()+i)<<std::endl;
+            std::cout<<*(this->data.data()+i)<<std::endl<<std::endl;
         }
     }
 }

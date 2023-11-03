@@ -29,7 +29,7 @@ void MathParser::TokenizeString(std::string &inputString, std::vector<std::share
     std::string mathPattern = "sin|cos|tan";
     std::string assignPattern = "=";
     std::string angleBracketPattern = "<|>";
-    std::string regexString = R"((\d+)|()" + 
+    std::string regexString = R"((\d*\.?\d+)|()" + 
                                 operatorPattern +
                                  R"()|(\()|(\))|()" + 
                                 variablePattern + R"()|()" + 

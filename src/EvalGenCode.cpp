@@ -5,15 +5,9 @@ namespace MathParser {
 }
 
 MathParser::QuickArray MathParser::ParseText(std::string inputString) {
-    // std::cout<<"here1"<<std::endl;
     bool isAssign = false; size_t stopIdx = 0;
     std::vector<std::shared_ptr<Token>> tokens;
     MathParser::TokenizeString(inputString, tokens, isAssign, stopIdx);
-    // std::cout<<"here2"<<std::endl;
-    // std::cout<<tokens.size()<<std::endl;
-    // for (auto token : tokens) {
-    //     std::cout<<token->name<<","<<token->type<<std::endl;
-    // }
 
     std::vector<std::shared_ptr<Token>> parsedTokens;
     MathParser::QuickArray result;
@@ -23,52 +17,16 @@ MathParser::QuickArray MathParser::ParseText(std::string inputString) {
         result = MathParser::EvalReversePolishToks(parsedTokens)[0];
     }
     else {
-        // std::cout<<"here3"<<std::endl;
-        // std::cout<<tokens.size()<<std::endl;
         std::vector<std::shared_ptr<Token>> slicedTokens(tokens.begin() + stopIdx, tokens.end());
-        // std::cout<<"here4"<<std::endl;
-        // std::cout<<tokens.size()<<std::endl;
-        // for (auto token : slicedTokens) {
-        //     std::cout<<token->name<<","<<token->type<<std::endl;
-        // }
+
         parsedTokens = MathParser::ShuntingYard(slicedTokens);
-        // std::cout<<"here5"<<std::endl;
-        // std::cout<<tokens.size()<<std::endl;
         result = MathParser::EvalReversePolishToks(parsedTokens)[0];
-        // std::cout<<"here6"<<std::endl;
-        // std::cout<<tokens.size()<<std::endl;
-        // std::cout<<stopIdx<<std::endl;
-        // for (int i=0; i<tokens.size(); i++) {
-        //     std::cout<<i<<", "<<tokens[i]<<std::endl;
-        // }
+
         std::string varName = tokens[stopIdx-1]->name;
-        // std::cout<<"here7"<<std::endl;
         MathParser::SetVariable(varName, result);
     }
     return result;  
 }
-
-MathParser::QuickArray MathParser::EvalExpression(std::string inputString) {
-    // std::vector<std::shared_ptr<Token>> tokens;
-    // bool f = false;
-    // MathParser::TokenizeString(inputString, tokens, f, 0);
-    // for (auto token : tokens) {
-    //     std::cout<<token->name<<","<<token->type<<std::endl;
-    // }
-
-    // std::cout<<tokens.size()<<std::endl;
-    // std::cout<<"-----------"<<std::endl;
-    // auto parsedTokens = MathParser::ShuntingYard(tokens);
-    // for (auto token : parsedTokens) {
-    //     std::cout<<token->name<<std::endl;
-    // }
-
-    return MathParser::QuickArray(2,1);
-
-    // auto result = MathParser::EvalReversePolishToks(parsedTokens);
-    
-    // return result[0];
-    }
 
 void MathParser::InitMaps() {
     // Load operators
@@ -98,7 +56,7 @@ void MathParser::SetVariable(std::string variableName, const MathParser::QuickAr
     MathParser::variables[variableName] = variableValue;
 }
 
-void MathParser::SetVariable(std::string variableName, const MathParser::QuickArray &&variableValue) {
+void MathParser::SetVariable(std::string variableName, const MathParser::QuickArray &&variableValue) { // Overload for rvalues
     MathParser::variables[variableName] = variableValue;
 }
 

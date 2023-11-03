@@ -12,7 +12,6 @@ int main() {
 
     std::cout<<"Enter expression to evaluate: ";
     std::getline(std::cin,str);
-    str.erase(remove_if(str.begin(), str.end(), ::isspace), str.end());
     std::cout<<std::endl<<str<<std::endl;
 
     auto out = ParseText(str);
@@ -22,7 +21,6 @@ int main() {
         str = "";
         std::cout<<"input: ";
         std::getline(std::cin,str);
-        str.erase(remove_if(str.begin(), str.end(), ::isspace), str.end());
         std::cout<<std::endl;
 
         auto out = ParseText(str);
