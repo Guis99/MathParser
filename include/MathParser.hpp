@@ -8,8 +8,7 @@ typedef MathParser::QuickArray QA;
 
 namespace MathParser {
     // Declare all maps
-    extern std::unordered_map<std::string, QuickArray> constants;
-    extern std::unordered_map<std::string, double> functions;
+    extern std::unordered_map<std::string, int> functions;
     extern std::unordered_map<std::string, QuickArray> variables;
     extern std::unordered_map<std::string, std::function<QuickArray(const QuickArray, const QuickArray)>> operators;
 
@@ -17,6 +16,7 @@ namespace MathParser {
     void TokenizeString(std::string &inputString, std::vector<std::shared_ptr<Token>> &tokens, bool &isAssignment, size_t &stopIdx);    
     std::vector<std::shared_ptr<Token>> ShuntingYard(const std::vector<std::shared_ptr<Token>> &tokens);
     std::string GetCurrentVariables();
+    std::string GetKeywords();
 
     // Evaluate intermediate representation - EvalGenCode.cpp
     QuickArray ParseText(std::string inputString);

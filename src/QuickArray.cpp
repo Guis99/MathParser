@@ -2,15 +2,12 @@
 
 using namespace MathParser;
 
-void QuickArray::print() {
-    for (int i=0; i<this->size(); i++) {
-        if (i < this->size() - 1) {
-            std::cout<<*(this->data.data()+i)<<", ";
-        }
-        else {
-            std::cout<<*(this->data.data()+i)<<std::endl<<std::endl;
-        }
+void QuickArray::print() const {
+    std::cout<<"<";
+    for (int i=0; i<this->size()-1; i++) {
+        std::cout<<*(this->data.data()+i)<<", ";
     }
+    std::cout<<*(this->data.end()-1)<<">"<<std::endl;
 }
 
 QuickArray QuickArray::applyBinaryOp(std::function<QuickArray(QuickArray, QuickArray)>& op, QuickArray &other) {
@@ -90,3 +87,18 @@ double QuickArray::operator[](size_t idx) const {
     return data[idx];
 }
 
+ QuickArray MathParser::QAofQA(const QuickArray& repeatArray, const QuickArray& inArray) {
+    MathParser::QuickArray result;
+
+    auto arraySize = inArray.size();
+
+    int repeat = (int)repeatArray[0];
+
+    for (int i=0; i<repeat; i++) {
+        for (int j=0; j<arraySize; j++) {
+            result.push_back(inArray[j]);
+        }
+    }
+
+    return result;
+ }

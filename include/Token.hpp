@@ -6,12 +6,16 @@
 enum TokenType {
     NUMBER,
     OPERATOR,
-    IDENTIFIER,
     OPEN_PAREN,
     CLOSE_PAREN,
     ASSIGN,
+    OPEN_ANGLE,
     CLOSE_ANGLE,
-    OPEN_ANGLE
+    OPEN_SQUARE,
+    CLOSE_SQUARE,
+    KEYWORD,
+    COMMA,
+    IDENTIFIER,
 };
 
 enum OperatorType {
@@ -20,12 +24,21 @@ enum OperatorType {
     MULT,
     DIV,
     POW,
+    OF,
 };
 
 enum IdentifierType {
     VARIABLE,
     FUNCTION,
     CONSTANT
+};
+
+enum FunctionType {
+    BCONSTRUCT=3,
+    INDEX=4,
+    SINE=0,
+    COSINE=1,
+    TANGENT=2,
 };
 
 class Token {
@@ -74,12 +87,17 @@ class Variable : public Identifier {
 
 class Function : public Identifier {
     public:
-    IdentifierType idType = IdentifierType::FUNCTION;
+    void setIdType(IdentifierType idType) {
+        this->idType = idType;
+    }
+    void setFuncName(IdentifierType idType) {
+        this->idType = idType;
+    }
+    void setArity(IdentifierType idType) {
+        this->idType = idType;
+    }
+
+    IdentifierType idType;
+    FunctionType functionName;
     int arity;
 };
-
-class Constant : public Identifier {
-    public:
-    IdentifierType idType = IdentifierType::CONSTANT;
-};
-

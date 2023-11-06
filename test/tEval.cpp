@@ -24,7 +24,9 @@ int main() {
         std::cout<<std::endl;
 
         auto out = ParseText(str);
+        std::cout<<"=> ";
         out.print();
+        std::cout<<std::endl;
     }
 
 }
