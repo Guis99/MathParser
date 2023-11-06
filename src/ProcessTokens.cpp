@@ -268,6 +268,10 @@ std::vector<std::shared_ptr<Token>> MathParser::ShuntingYard(const std::vector<s
                     varPtr->type = TokenType::IDENTIFIER;
                     varPtr->idType = IdentifierType::VARIABLE;
                     RpnVec.push_back(varPtr);
+                    if (!wereValues.empty()) {
+                        wereValues.pop();
+                        wereValues.push(true);
+                    }
                     break;
                 }
                 else {

@@ -15,12 +15,12 @@ MathParser::QuickArray MathParser::ParseText(std::string inputString) {
     if (!isAssign) {
         auto parsedTokens = MathParser::ShuntingYard(tokens);
         for (auto token : parsedTokens) {
-        std::cout<<token->name<<", "<<token->type;
+        // std::cout<<token->name<<", "<<token->type;
         if (token->type == TokenType::IDENTIFIER) {
             std::shared_ptr<Identifier> identifier = std::dynamic_pointer_cast<Identifier>(token);
-            std::cout<<identifier->idType<<std::endl;
+            // std::cout<<identifier->idType<<std::endl;
         }  
-        std::cout<<std::endl;
+        // std::cout<<std::endl;
     }
         result = MathParser::EvalReversePolishToks(parsedTokens)[0];
     }
@@ -103,24 +103,30 @@ std::vector<MathParser::QuickArray> MathParser::EvalReversePolishToks(const std:
             case IDENTIFIER: {
                 auto idName = token->name;
                 std::shared_ptr<Identifier> identifier = std::dynamic_pointer_cast<Identifier>(token);
-                std::cout<<idName<<", "<<identifier->idType<<std::endl;
+                // std::cout<<idName<<", "<<identifier->idType<<std::endl;
                 if (MathParser::variables.find(idName) != MathParser::variables.end()) {
-                    std::cout<<"here1"<<std::endl;
+                    std::cout<<idName<<std::endl;
                     output.push_back(MathParser::variables[idName]);
                 }
                 else {
-                    std::cout<<"here2"<<std::endl;
+                    // std::cout<<"here2"<<std::endl;
                     std::shared_ptr<Function> func = std::dynamic_pointer_cast<Function>(token);
-                    std::cout<<"here3"<<", "<<MathParser::functions[idName]<<std::endl;
+                    // std::cout<<"here3"<<", "<<MathParser::functions[idName]<<std::endl;
                     switch (MathParser::functions[idName]) {
                         case FunctionType::BCONSTRUCT: {
-                            std::cout<<"here4"<<", "<<MathParser::functions[idName]<<std::endl;
+                            // std::cout<<"here4"<<", "<<MathParser::functions[idName]<<std::endl;
+                            for (auto item : output) {
+                                item.print();
+                            }
                             MathParser::QuickArray result;
                             auto backIdx = output.size();
                             std::cout<<"here5"<<", "<<func->name<<std::endl;
                             std::cout<<func->arity<<", "<<backIdx<<std::endl;
                             for (int i=backIdx - func->arity; i<backIdx; i++) {
                                 auto feedArray = output[i];
+                                std::cout<<"feed: ";
+                                feedArray.print();
+                                std::cout<<std::endl;
                                 for (const auto &element : feedArray) {
                                     result.push_back(element);
                                 }
