@@ -4,18 +4,18 @@
 #pragma once
 
 enum TokenType {
-    NUMBER,
-    OPERATOR,
-    OPEN_PAREN,
-    CLOSE_PAREN,
-    ASSIGN,
-    OPEN_ANGLE,
-    CLOSE_ANGLE,
-    OPEN_SQUARE,
-    CLOSE_SQUARE,
-    KEYWORD,
-    COMMA,
-    IDENTIFIER,
+    NUMBER=1,
+    OPERATOR=2,
+    ASSIGN=3,
+    OPEN_PAREN=4,
+    CLOSE_PAREN=5,
+    OPEN_ANGLE=6,
+    CLOSE_ANGLE=7,
+    OPEN_SQUARE=8,
+    CLOSE_SQUARE=9,
+    KEYWORD=10,
+    COMMA=11,
+    IDENTIFIER=12,
 };
 
 enum OperatorType {
@@ -34,11 +34,17 @@ enum IdentifierType {
 };
 
 enum FunctionType {
-    BCONSTRUCT=3,
-    INDEX=4,
-    SINE=0,
-    COSINE=1,
-    TANGENT=2,
+    BCTOR,
+    INDEX,
+    COMPOSE,
+    SIN,
+    COS,
+    TAN,
+};
+
+struct RawToken {
+    std::string name;
+    int type;
 };
 
 class Token {
@@ -58,7 +64,7 @@ class Operator : public Token {
     public:
     // TokenType type = TokenType::OPERATOR;
     OperatorType oper;
-    int precedence; // 1,2, or 3
+    int precedence; // 1,2,3, or 4
     bool LH; // left-associative; true when left-assoc, false when right-assoc
 };
 

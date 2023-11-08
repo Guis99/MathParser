@@ -16,23 +16,10 @@ int main() {
 
     bool isAssign;
     size_t assignIdx;
-    std::vector<std::shared_ptr<Token>> tokens;
-
-    TokenizeString(str, tokens, isAssign, assignIdx);
+    auto rawTokens = TokenizeString(str);
+    auto tokens = TransformTokens(rawTokens, isAssign, assignIdx);
     auto parsedTokens = ShuntingYard(tokens);
     for (auto token : parsedTokens) {
-        // std::cout<<token->name<<", "<<token->type;
-        if (token->type == TokenType::IDENTIFIER) {
-            // std::shared_ptr<Identifier> identifier = std::dynamic_pointer_cast<Identifier>(token);
-            // auto identifierObj = *identifier;
-            
-            // std::shared_ptr<Function> funcPtr = std::dynamic_pointer_cast<Function>(token);
-            // std::cout<<", "<<funcPtr->arity<<", "<<funcPtr->idType<<std::endl;
-            std::shared_ptr<Identifier> identifier = std::dynamic_pointer_cast<Identifier>(token);
-            std::cout<<identifier->name<<", "<<identifier->idType<<std::endl;
-            std::shared_ptr<Function> funcPtr = std::dynamic_pointer_cast<Function>(token);
-            std::cout<<funcPtr->name<<", "<<funcPtr->arity<<", "<<funcPtr->idType<<std::endl;
-        }  
-        std::cout<<std::endl;
+        std::cout<<token->name<<", "<<token->type<<std::endl;
     }
 }

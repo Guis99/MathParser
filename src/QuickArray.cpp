@@ -86,19 +86,3 @@ QuickArray QuickArray::operator^(const QuickArray& other) {
 double QuickArray::operator[](size_t idx) const {
     return data[idx];
 }
-
- QuickArray MathParser::QAofQA(const QuickArray& repeatArray, const QuickArray& inArray) {
-    MathParser::QuickArray result;
-
-    auto arraySize = inArray.size();
-
-    int repeat = (int)repeatArray[0];
-
-    for (int i=0; i<repeat; i++) {
-        for (int j=0; j<arraySize; j++) {
-            result.push_back(inArray[j]);
-        }
-    }
-
-    return result;
- }

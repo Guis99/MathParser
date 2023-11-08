@@ -5,15 +5,20 @@
 #define TOKEN_PROCESSING
 
 typedef MathParser::QuickArray QA;
+typedef double (*mathFunc)(double);
 
 namespace MathParser {
     // Declare all maps
-    extern std::unordered_map<std::string, int> functions;
+    extern std::unordered_map<std::string, FunctionType> functions;
+    extern std::unordered_map<std::string, mathFunc> mathFunctions;
     extern std::unordered_map<std::string, QuickArray> variables;
     extern std::unordered_map<std::string, std::function<QuickArray(const QuickArray, const QuickArray)>> operators;
 
     // Token processing - ProcessTokens.cpp
-    void TokenizeString(std::string &inputString, std::vector<std::shared_ptr<Token>> &tokens, bool &isAssignment, size_t &stopIdx);    
+    std::vector<RawToken> TokenizeString(std::string &inputString);
+    std::vector<std::shared_ptr<Token>> TransformTokens(std::vector<RawToken> &rawTokens, 
+                                                        bool &isAssignment, 
+                                                        size_t &stopIdx);    
     std::vector<std::shared_ptr<Token>> ShuntingYard(const std::vector<std::shared_ptr<Token>> &tokens);
     std::string GetCurrentVariables();
     std::string GetKeywords();

@@ -1,13 +1,15 @@
 #include "../include/MathParser.hpp"
+#include "../include/BuiltIns.hpp"
 
 namespace MathParser {
     std::unordered_map<std::string, std::function<QuickArray(QuickArray, QuickArray)>> operators;
+    std::unordered_map<std::string, mathFunc> mathFunctions;
 }
 
 MathParser::QuickArray MathParser::ParseText(std::string inputString) {
     bool isAssign = false; size_t stopIdx = 0;
-    std::vector<std::shared_ptr<Token>> tokens;
-    MathParser::TokenizeString(inputString, tokens, isAssign, stopIdx);
+    auto rawTokens = MathParser::TokenizeString(inputString);
+    auto tokens = MathParser::TransformTokens(rawTokens, isAssign, stopIdx);
 
     std::vector<std::shared_ptr<Token>> parsedTokens;
     MathParser::QuickArray result;
@@ -50,17 +52,35 @@ void MathParser::InitMaps() {
     MathParser::operators["/"] = div;
     MathParser::operators["^"] = pow;
 
-
     // Load constants
     MathParser::variables["pi"] = QA(1, 3.1415926535);
     MathParser::variables["e"] = QA(1, 2.7182818284);
 
     // Load functions
-    MathParser::functions["sin"] = 0; 
-    MathParser::functions["cos"] = 1;
-    MathParser::functions["tan"] = 2;
-    MathParser::functions["bctor"] = 3;
-    MathParser::functions["idx"] = 4;
+    MathParser::functions["BCTOR"] = FunctionType::BCTOR;
+    MathParser::functions["INDEX"] = FunctionType::INDEX;
+    MathParser::functions["COMPOSE"] = FunctionType::COMPOSE;
+
+    // Load math functions
+    MathParser::mathFunctions["exp"] = std::exp;
+    MathParser::mathFunctions["log"] = std::log;
+    MathParser::mathFunctions["log10"] = std::log10;
+    MathParser::mathFunctions["log2"] = std::log2;
+    MathParser::mathFunctions["sin"] = std::sin;
+    MathParser::mathFunctions["cos"] = std::cos;
+    MathParser::mathFunctions["tan"] = std::tan;
+    MathParser::mathFunctions["asin"] = std::asin;
+    MathParser::mathFunctions["acos"] = std::acos;
+    MathParser::mathFunctions["atan"] = std::atan;
+    MathParser::mathFunctions["sinh"] = std::sinh;
+    MathParser::mathFunctions["cosh"] = std::cosh;
+    MathParser::mathFunctions["tanh"] = std::tanh;
+    MathParser::mathFunctions["asinh"] = std::asinh;
+    MathParser::mathFunctions["acosh"] = std::acosh;
+    MathParser::mathFunctions["atanh"] = std::atanh;
+    MathParser::mathFunctions["erf"] = std::erf;
+    MathParser::mathFunctions["erfc"] = std::erfc;
+    MathParser::mathFunctions["tgamma"] = std::tgamma;
 }
 
 void MathParser::SetVariable(std::string variableName, const MathParser::QuickArray &variableValue) {
@@ -87,11 +107,11 @@ std::vector<MathParser::QuickArray> MathParser::EvalReversePolishToks(const std:
 
                 MathParser::QuickArray result;
 
-                if (token->name != "of") {
+                if (token->name != "COMPOSE") {
                     result = arg2.applyBinaryOp(MathParser::operators[token->name], arg1);
                 }
                 else {
-                    result = MathParser::QAofQA(arg2,arg1);
+                    result = MathParser::COMPOSE(arg2,arg1);
                 }
 
                 output.pop_back();
@@ -105,28 +125,25 @@ std::vector<MathParser::QuickArray> MathParser::EvalReversePolishToks(const std:
                 std::shared_ptr<Identifier> identifier = std::dynamic_pointer_cast<Identifier>(token);
                 // std::cout<<idName<<", "<<identifier->idType<<std::endl;
                 if (MathParser::variables.find(idName) != MathParser::variables.end()) {
-                    std::cout<<idName<<std::endl;
+                    // std::cout<<idName<<std::endl;
                     output.push_back(MathParser::variables[idName]);
+                }
+                else if (MathParser::mathFunctions.find(idName) != MathParser::mathFunctions.end()) {
+                    auto prevNumber = output.back();
+                    output.pop_back();
+                    output.push_back(MathParser::evalMathFunction(prevNumber, MathParser::mathFunctions[idName]));
                 }
                 else {
                     // std::cout<<"here2"<<std::endl;
                     std::shared_ptr<Function> func = std::dynamic_pointer_cast<Function>(token);
                     // std::cout<<"here3"<<", "<<MathParser::functions[idName]<<std::endl;
                     switch (MathParser::functions[idName]) {
-                        case FunctionType::BCONSTRUCT: {
+                        case FunctionType::BCTOR: {
                             // std::cout<<"here4"<<", "<<MathParser::functions[idName]<<std::endl;
-                            for (auto item : output) {
-                                item.print();
-                            }
                             MathParser::QuickArray result;
                             auto backIdx = output.size();
-                            std::cout<<"here5"<<", "<<func->name<<std::endl;
-                            std::cout<<func->arity<<", "<<backIdx<<std::endl;
                             for (int i=backIdx - func->arity; i<backIdx; i++) {
                                 auto feedArray = output[i];
-                                std::cout<<"feed: ";
-                                feedArray.print();
-                                std::cout<<std::endl;
                                 for (const auto &element : feedArray) {
                                     result.push_back(element);
                                 }
