@@ -32,4 +32,15 @@ namespace MathParser {
         }
         return result;
     }
+
+    QA INDEX(const QA& inArray, const QuickArray& indexArray) {
+        QA out;
+        out.reserve(indexArray.size());
+
+        for (int i=0; i<indexArray.size(); i++) {
+            int idx = (int)(indexArray[i]);
+            out.push_back(inArray[idx]);
+        }
+        return out;
+    }
 }

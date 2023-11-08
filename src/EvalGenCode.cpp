@@ -138,8 +138,9 @@ std::vector<MathParser::QuickArray> MathParser::EvalReversePolishToks(const std:
                     std::shared_ptr<Function> func = std::dynamic_pointer_cast<Function>(token);
                     // std::cout<<"here3"<<", "<<MathParser::functions[idName]<<std::endl;
                     switch (MathParser::functions[idName]) {
+                        
                         case FunctionType::BCTOR: {
-                            // std::cout<<"here4"<<", "<<MathParser::functions[idName]<<std::endl;
+                            // std::cout<<"here4"<<", "<<MathParser::functions[idName]<<std::endl;                            
                             MathParser::QuickArray result;
                             auto backIdx = output.size();
                             for (int i=backIdx - func->arity; i<backIdx; i++) {
@@ -152,6 +153,17 @@ std::vector<MathParser::QuickArray> MathParser::EvalReversePolishToks(const std:
                                 output.pop_back();
                             }
                             output.push_back(result);
+                            break;
+                        }
+                        case FunctionType::INDEX: {
+                            auto backIdx = output.size();
+                            auto arg2 = output[backIdx-1];
+                            auto arg1 = output[backIdx-2];
+                            output.pop_back();
+                            output.pop_back();
+                            auto result = MathParser::INDEX(arg1,arg2);
+                            output.push_back(result);
+                            break;
                         }
                     }
                 }

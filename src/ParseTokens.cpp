@@ -58,7 +58,6 @@ std::vector<std::shared_ptr<Token>> MathParser::ShuntingYard(const std::vector<s
             }
             case TokenType::IDENTIFIER: {
                 std::string idName = token->name;
-                // std::cout<<idName<<std::endl;
                 if ((MathParser::mathFunctions.find(idName) != MathParser::mathFunctions.end()) ||
                     (MathParser::functions.find(idName) != MathParser::functions.end())) {
                     // create new function object
