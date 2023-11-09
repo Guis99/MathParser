@@ -62,8 +62,8 @@ std::vector<std::shared_ptr<Token>> MathParser::TransformTokens(std::vector<RawT
                 Number *number = new Number();
                 std::shared_ptr<Number> token(number);
                 // Initialize smart pointer to QuickArray
-                QuickArray *QA = new MathParser::QuickArray(std::stod(val));
-                std::shared_ptr<MathParser::QuickArray> QuickArrayPtr(QA);
+                QA *qa = new QA(std::stod(val));
+                std::shared_ptr<QA> QuickArrayPtr(qa);
                 // Set token attributes
                 token->type = TokenType::NUMBER;
                 token->name = val;
@@ -83,9 +83,17 @@ std::vector<std::shared_ptr<Token>> MathParser::TransformTokens(std::vector<RawT
                 }
 
                 else if (val == "-") {
-                    token->oper = OperatorType::MINUS;
-                    token->LH = true;
-                    token->precedence = 1;
+                    if (i == 0 || tokens[i-1]->type == TokenType::OPERATOR ||
+                        tokens[i-1]->type == TokenType::OPEN_PAREN) {
+                        token->oper = OperatorType::NEGATE;
+                        token->LH = true;
+                        token->precedence = 5;
+                    }
+                    else {
+                        token->oper = OperatorType::MINUS;
+                        token->LH = true;
+                        token->precedence = 1;
+                    }
                 }
 
                 else if (val == "*") {

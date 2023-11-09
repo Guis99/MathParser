@@ -5,22 +5,23 @@
 
 namespace MathParser {
 
+    template <typename T>
     class QuickArray {
         public:
         //Constructors
         QuickArray() {};
 
-        QuickArray(std::vector<double> data) {
+        QuickArray(std::vector<T> &data) {
             this->data = data;
         }
 
-        QuickArray(double data) {
+        QuickArray(T data) {
             this->data = {data};
         }
 
-        QuickArray(std::initializer_list<double> values) : data(values) {};
+        QuickArray(std::initializer_list<T> values) : data(values) {};
 
-        QuickArray(size_t size, double value) : data(size, value) {};
+        QuickArray(size_t size, T value) : data(size, value) {};
 
         // std::vector methods I want
         size_t size() const {
@@ -31,7 +32,7 @@ namespace MathParser {
             data.reserve(newCapacity);
         }
 
-        void push_back(double newElement) {
+        void push_back(T newElement) {
             data.push_back(newElement);
         }
 
@@ -47,30 +48,100 @@ namespace MathParser {
             return this->data.end();
         }
 
-        void print() const;
+        void print() const {
+            std::cout<<"<";
+            for (int i=0; i<this->size()-1; i++) {
+                std::cout<<*(this->data.data()+i)<<", ";
+            }
+            std::cout<<*(this->data.end()-1)<<">"<<std::endl;
+        }
 
-        QuickArray applyBinaryOp(std::function<QuickArray(QuickArray, QuickArray)> &op, QuickArray &other);
+        QuickArray<T> applyBinaryOp(std::function<QuickArray<T>(QuickArray<T>, QuickArray<T>)>& op, QuickArray<T> &other) {
+            int s1 = this->size();
+            int s2 = other.size();
 
-        QuickArray operator+(const QuickArray& other);
-        QuickArray operator-(const QuickArray& other);
-        QuickArray operator*(const QuickArray& other);
-        QuickArray operator/(const QuickArray& other);
-        QuickArray operator^(const QuickArray& other);
-        
-        double operator[](size_t idx) const;
+            if (s1 == s2) {
+                return op(*this, other);
+            }
+
+            else if (s1 == 1) {
+                QuickArray<T> expandedArray(s2, *(this->data.data()));
+                return op(expandedArray, other);
+            }
+
+            else if (s2 == 1) {
+                QuickArray<T> expandedArray(s1, other[0]);
+                return op(*this, expandedArray);
+            }
+
+            else {
+                throw IncompatibleArraySizesException("Array sizes are incompatible.");
+                QuickArray<T> defaultreturn;
+                return defaultreturn;
+            }
+        }
+
+        QuickArray<T> operator+(const QuickArray<T>& other) {
+            QuickArray<T> result;
+            result.reserve(this->size());
+
+            for (size_t i = 0; i < this->size(); i++) {
+                result.push_back((*this)[i] + other[i]);
+            }
+            return result;
+        }
+
+        QuickArray<T> operator-(const QuickArray<T>& other) {
+            QuickArray<T> result;
+            result.reserve(this->size());
+
+            for (size_t i = 0; i < this->size(); i++) {
+                result.push_back((*this)[i] - other[i]);
+            }
+            return result;
+        }
+
+        QuickArray<T> operator*(const QuickArray<T>& other) {
+            QuickArray<T> result;
+            result.reserve(this->size());
+
+            for (size_t i = 0; i < this->size(); i++) {
+                result.push_back((*this)[i] * other[i]);
+            }
+            return result;
+        }
+
+        QuickArray<T> operator/(const QuickArray<T>& other) {
+            QuickArray<T> result;
+            result.reserve(this->size());
+
+            for (size_t i = 0; i < this->size(); i++) {
+                result.push_back((*this)[i] / other[i]);
+            }
+            return result;
+        }
+
+        QuickArray<T> operator^(const QuickArray<T>& other) {
+            QuickArray<T> result;
+            result.reserve(this->size());
+
+            for (size_t i = 0; i < this->size(); i++) {
+                result.push_back(std::pow((*this)[i], other[i]));
+            }
+            return result;
+        }
+
+        T operator[](size_t idx) const {
+            return data[idx];
+        }
+
 
         private:
-        std::vector<double> data;
+        std::vector<T> data;
 
-    };
-
-    QuickArray QAofQA(const QuickArray& repeatArray, const QuickArray& inArray);
-
-    class IncompatibleArraySizesException : public std::exception {
+        class IncompatibleArraySizesException : public std::exception {
         public:
-            IncompatibleArraySizesException(const std::string& message) : message(message) {}
-
-            // Override the what() function to provide a description of the exception.
+            IncompatibleArraySizesException(const std::string& message) : message(message) {};
             const char* what() const noexcept override {
                 return message.c_str();
             }
@@ -78,6 +149,21 @@ namespace MathParser {
         private:
             std::string message;
     };
+
+    };
 }
+
+// namespace MathParser {
+//     class IncompatibleArraySizesException : public std::exception {
+//         public:
+//             IncompatibleArraySizesException(const std::string& message) : message(message) {};
+//             const char* what() const noexcept override {
+//                 return message.c_str();
+//             }
+
+//         private:
+//             std::string message;
+//     };
+// }
 
 #endif

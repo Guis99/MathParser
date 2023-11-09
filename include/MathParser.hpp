@@ -4,15 +4,15 @@
 #ifndef TOKEN_PROCESSING
 #define TOKEN_PROCESSING
 
-typedef MathParser::QuickArray QA;
+typedef MathParser::QuickArray<double> QA;
 typedef double (*mathFunc)(double);
 
 namespace MathParser {
     // Declare all maps
     extern std::unordered_map<std::string, FunctionType> functions;
     extern std::unordered_map<std::string, mathFunc> mathFunctions;
-    extern std::unordered_map<std::string, QuickArray> variables;
-    extern std::unordered_map<std::string, std::function<QuickArray(const QuickArray, const QuickArray)>> operators;
+    extern std::unordered_map<std::string, QA> variables;
+    extern std::unordered_map<std::string, std::function<QA(const QA, const QA)>> operators;
 
     // Token processing - ProcessTokens.cpp
     std::vector<RawToken> TokenizeString(std::string &inputString);
@@ -24,11 +24,11 @@ namespace MathParser {
     std::string GetKeywords();
 
     // Evaluate intermediate representation - EvalGenCode.cpp
-    QuickArray ParseText(std::string inputString);
-    QuickArray EvalExpression(std::string inputString);
-    std::vector<MathParser::QuickArray> EvalReversePolishToks(const std::vector<std::shared_ptr<Token>> &tokens);
-    void SetVariable(std::string variableName, const QuickArray &variableValue);
-    void SetVariable(std::string variableName, const QuickArray &&variableValue);
+    QA ParseText(std::string inputString);
+    QA EvalExpression(std::string inputString);
+    std::vector<QA> EvalReversePolishToks(const std::vector<std::shared_ptr<Token>> &tokens);
+    void SetVariable(std::string variableName, const QA &variableValue);
+    void SetVariable(std::string variableName, const QA &&variableValue);
     void InitMaps();
 
     // Exceptions

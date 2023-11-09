@@ -2,17 +2,17 @@
 #include "../include/BuiltIns.hpp"
 
 namespace MathParser {
-    std::unordered_map<std::string, std::function<QuickArray(QuickArray, QuickArray)>> operators;
+    std::unordered_map<std::string, std::function<QA(QA, QA)>> operators;
     std::unordered_map<std::string, mathFunc> mathFunctions;
 }
 
-MathParser::QuickArray MathParser::ParseText(std::string inputString) {
+QA MathParser::ParseText(std::string inputString) {
     bool isAssign = false; size_t stopIdx = 0;
     auto rawTokens = MathParser::TokenizeString(inputString);
     auto tokens = MathParser::TransformTokens(rawTokens, isAssign, stopIdx);
 
     std::vector<std::shared_ptr<Token>> parsedTokens;
-    MathParser::QuickArray result;
+    QA result;
 
     if (!isAssign) {
         auto parsedTokens = MathParser::ShuntingYard(tokens);
@@ -83,16 +83,16 @@ void MathParser::InitMaps() {
     MathParser::mathFunctions["tgamma"] = std::tgamma;
 }
 
-void MathParser::SetVariable(std::string variableName, const MathParser::QuickArray &variableValue) {
+void MathParser::SetVariable(std::string variableName, const QA &variableValue) {
     MathParser::variables[variableName] = variableValue;
 }
 
-void MathParser::SetVariable(std::string variableName, const MathParser::QuickArray &&variableValue) { // Overload for rvalues
+void MathParser::SetVariable(std::string variableName, const QA &&variableValue) { // Overload for rvalues
     MathParser::variables[variableName] = variableValue;
 }
 
-std::vector<MathParser::QuickArray> MathParser::EvalReversePolishToks(const std::vector<std::shared_ptr<Token>> &tokens) {
-    std::vector<MathParser::QuickArray> output;
+std::vector<QA> MathParser::EvalReversePolishToks(const std::vector<std::shared_ptr<Token>> &tokens) {
+    std::vector<QA> output;
     for (auto token : tokens) {
         switch (token->type) {
             case NUMBER: {
@@ -101,20 +101,31 @@ std::vector<MathParser::QuickArray> MathParser::EvalReversePolishToks(const std:
                 break;
             }
             case OPERATOR: {
+                std::shared_ptr<Operator> oper = std::dynamic_pointer_cast<Operator>(token);
                 auto backIdx = output.size();
                 auto arg1 = output[backIdx-1];
-                auto arg2 = output[backIdx-2];
 
-                MathParser::QuickArray result;
+                QA result;
 
-                if (token->name != "COMPOSE") {
-                    result = arg2.applyBinaryOp(MathParser::operators[token->name], arg1);
+                switch (oper->oper) {
+                    case OperatorType::NEGATE: {
+                        result = MathParser::NEGATE(arg1);
+                        break;
+                    }
+                    case OperatorType::OF: {
+                        auto arg2 = output[backIdx-2];
+                        output.pop_back();
+                        result = MathParser::COMPOSE(arg2,arg1);
+                        break;
+                    }
+                    default: {
+                        auto arg2 = output[backIdx-2];
+                        output.pop_back();
+                        result = arg2.applyBinaryOp(MathParser::operators[token->name], arg1);
+                        break;
+                    }
                 }
-                else {
-                    result = MathParser::COMPOSE(arg2,arg1);
-                }
 
-                output.pop_back();
                 output.pop_back();
                 output.push_back(result);
                 break;
@@ -141,7 +152,7 @@ std::vector<MathParser::QuickArray> MathParser::EvalReversePolishToks(const std:
                         
                         case FunctionType::BCTOR: {
                             // std::cout<<"here4"<<", "<<MathParser::functions[idName]<<std::endl;                            
-                            MathParser::QuickArray result;
+                            QA result;
                             auto backIdx = output.size();
                             for (int i=backIdx - func->arity; i<backIdx; i++) {
                                 auto feedArray = output[i];

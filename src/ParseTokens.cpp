@@ -2,7 +2,7 @@
 
 namespace MathParser {
     std::unordered_map<std::string, FunctionType> functions;
-    std::unordered_map<std::string, QuickArray> variables;
+    std::unordered_map<std::string, QA> variables;
 }
 
 std::string MathParser::GetCurrentVariables() {

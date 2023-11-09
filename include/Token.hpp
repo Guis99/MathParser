@@ -25,6 +25,7 @@ enum OperatorType {
     DIV,
     POW,
     OF,
+    NEGATE
 };
 
 enum IdentifierType {
@@ -57,7 +58,7 @@ class Token {
 class Number : public Token {
     public:
     // TokenType type = TokenType::NUMBER;
-    std::shared_ptr<MathParser::QuickArray> value;
+    std::shared_ptr<MathParser::QuickArray<double>> value;
 };
 
 class Operator : public Token {

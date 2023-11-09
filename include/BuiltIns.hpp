@@ -3,10 +3,10 @@
 #include "Token.hpp"
 #include "QuickArray.hpp"
 
-namespace MathParser {
-    typedef QuickArray QA;
-    typedef double (*mathFunc)(double);
+typedef MathParser::QuickArray<double> QA;
+typedef double (*mathFunc)(double);
 
+namespace MathParser {
     QA evalMathFunction(QA &input, mathFunc mathFuncToUse) {
         std::vector<double> outvec;
         outvec.reserve(input.size());
@@ -19,8 +19,8 @@ namespace MathParser {
         return out;
     }
 
-    QA COMPOSE(const QA& repeatArray, const QuickArray& inArray) {
-        MathParser::QuickArray result;
+    QA COMPOSE(const QA& repeatArray, const QA& inArray) {
+        QA result;
 
         auto arraySize = inArray.size();
         int repeat = (int)repeatArray[0];
@@ -33,13 +33,23 @@ namespace MathParser {
         return result;
     }
 
-    QA INDEX(const QA& inArray, const QuickArray& indexArray) {
+    QA INDEX(const QA& inArray, const QA& indexArray) {
         QA out;
         out.reserve(indexArray.size());
 
         for (int i=0; i<indexArray.size(); i++) {
             int idx = (int)(indexArray[i]);
             out.push_back(inArray[idx]);
+        }
+        return out;
+    }
+
+    QA NEGATE(const QA& inArray) {
+        QA out;
+        out.reserve(inArray.size());
+
+        for (int i=0; i<inArray.size(); i++) {
+            out.push_back(-1*inArray[i]);
         }
         return out;
     }
