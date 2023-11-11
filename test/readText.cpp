@@ -86,7 +86,6 @@ int main() {
         std::string substring = result.substr(prevPos, pos - prevPos);
 
         // Output or process the substring
-        std::cout << "Substring: " << substring << std::endl;
         auto out = ParseText(substring);
         std::cout<<"=> ";
         out.print();

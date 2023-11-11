@@ -5,17 +5,17 @@ using namespace MathParser;
 int main() {
 
     // initialize QA
-    QuickArray arr1 = {1,2,3};
+    QA arr1 = {1,2,3};
 
     for (int i=0; i<100; i++) {
         arr1.push_back(i);
     }
 
-    QuickArray arr2(1.2);
+    QA arr2(1.2);
     std::vector<double> v1 = {1,2,3};
-    QuickArray arr3(v1);
+    QA arr3(v1);
 
-    QuickArray reparr(10,2);
+    QA reparr(10,2);
 
     arr1.print();
     arr2.print();
@@ -24,9 +24,9 @@ int main() {
 
     // Do operations on QA
 
-    QuickArray arr4 = {1,2,3,4,5};
-    QuickArray arr5 = {2,3,4,5,6};
-    QuickArray scal = {3};
+    QA arr4 = {1,2,3,4,5};
+    QA arr5 = {2,3,4,5,6};
+    QA scal = {3};
 
     auto testArr = arr4+arr5;
     testArr.print();
@@ -38,11 +38,11 @@ int main() {
     testArr.print();
     testArr = arr4^arr5;
     testArr.print();
-    std::function<QuickArray(QuickArray, QuickArray)> add = QuickArray::operator+;
-    std::function<QuickArray(QuickArray, QuickArray)> sub = QuickArray::operator-;
-    std::function<QuickArray(QuickArray, QuickArray)> mult = QuickArray::operator*;
-    std::function<QuickArray(QuickArray, QuickArray)> div = QuickArray::operator/;
-    std::function<QuickArray(QuickArray, QuickArray)> pow = QuickArray::operator^;
+    std::function<QA(QA, QA)> add = QA::operator+;
+    std::function<QA(QA, QA)> sub = QA::operator-;
+    std::function<QA(QA, QA)> mult = QA::operator*;
+    std::function<QA(QA, QA)> div = QA::operator/;
+    std::function<QA(QA, QA)> pow = QA::operator^;
     
 
     auto prod1 = arr4.applyBinaryOp(mult, arr5);

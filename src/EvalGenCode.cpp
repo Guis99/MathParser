@@ -64,6 +64,11 @@ void MathParser::InitMaps() {
     MathParser::functions["BCTOR"] = FunctionType::BCTOR;
     MathParser::functions["INDEX"] = FunctionType::INDEX;
     MathParser::functions["COMPOSE"] = FunctionType::COMPOSE;
+    MathParser::functions["sum"] = FunctionType::SUM;
+    MathParser::functions["norm"] = FunctionType::NORM;
+    MathParser::functions["shape"] = FunctionType::SHAPE;
+    MathParser::functions["range"] = FunctionType::RANGE;
+    MathParser::functions["linspace"] = FunctionType::LINSPACE;
 
     // Load math functions
     MathParser::mathFunctions["exp"] = std::exp;
@@ -177,6 +182,63 @@ std::vector<QA> MathParser::EvalReversePolishToks(const std::vector<std::shared_
                             output.pop_back();
                             output.pop_back();
                             auto result = MathParser::INDEX(arg1,arg2);
+                            output.push_back(result);
+                            break;
+                        }
+                        case FunctionType::SUM: {
+                            auto arg1 = output.back();
+                            output.pop_back();
+                            auto result = MathParser::SUM(arg1);
+                            output.push_back(result);
+                            break;
+                        }
+                        case FunctionType::NORM: {
+                            auto backIdx = output.size();
+                            auto arg2 = output[backIdx-1];
+                            auto arg1 = output[backIdx-2];
+                            output.pop_back();
+                            output.pop_back();
+                            auto result = MathParser::NORM(arg1,arg2);
+                            output.push_back(result);
+                            break;
+                        }
+                        case FunctionType::SHAPE: {
+                            auto arg1 = output.back();
+                            output.pop_back();
+                            auto result = MathParser::SHAPE(arg1);
+                            output.push_back(result);
+                            break;
+                        }
+                        case FunctionType::RANGE: {
+                            auto backIdx = output.size();
+                            auto arg3 = output[backIdx-1];
+                            auto arg2 = output[backIdx-2];
+                            
+                            QA result;
+                            if (func->arity == 2) {
+                                result = MathParser::RANGE(arg2,arg3);
+                            }
+                            else if (func->arity == 3) {
+                                auto arg1 = output[backIdx-3];
+                                result = MathParser::RANGE(arg1,arg2,arg3);
+                                output.pop_back();
+                            }
+
+                            output.pop_back();
+                            output.pop_back();
+                            
+                            output.push_back(result);
+                            break;
+                        }
+                        case FunctionType::LINSPACE: {
+                            auto backIdx = output.size();
+                            auto arg3 = output[backIdx-1];
+                            auto arg2 = output[backIdx-2];
+                            auto arg1 = output[backIdx-3];
+                            output.pop_back();
+                            output.pop_back();
+                            output.pop_back();
+                            auto result = MathParser::LINSPACE(arg1,arg2,arg3);
                             output.push_back(result);
                             break;
                         }

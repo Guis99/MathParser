@@ -60,4 +60,75 @@ namespace MathParser {
         }
         return out;
     }
+
+    QA SUM(const QA& inArray) {
+        double out(0);
+
+        for (int i=0; i<inArray.size(); i++) {
+            out += inArray[i];
+        }
+
+        return out;
+    }
+
+    QA NORM(QA& inArray, QA& p) {
+        QA out;
+
+        for (int i=0; i<inArray.size(); i++) {
+            out.push_back(std::pow(inArray[i],p[0]));
+        }
+
+        out = SUM(out);
+        auto result = QA(std::pow(out[0],1/p[0]));
+
+        return result;
+    }
+
+    QA SHAPE(const QA& inArray) {
+        return QA(inArray.size());
+    }
+
+    QA RANGE(const QA& start, const QA& end) {
+        QA out;
+        auto curr = start[0];
+        double incr = 1;
+        auto last = end[0];
+
+        auto estElem = (int)((last-curr)/incr) + 1;
+
+        while (curr <= last) {
+            out.push_back(curr);
+            curr += incr;
+        }
+        return out;
+    }
+
+    QA RANGE(const QA& start, const QA& increment, const QA& end) {
+        QA out;
+        auto curr = start[0];
+        auto incr = increment[0];
+        auto last = end[0];
+
+        auto estElem = (int)((last-curr)/incr) + 1;
+
+        while (curr <= last) {
+            out.push_back(curr);
+            curr += incr;
+        }
+        return out;
+    }
+
+    QA LINSPACE(const QA& start, const QA& end, const QA& numElms) {
+        QA out;
+        out.reserve((int)numElms[0]);
+        auto curr = start[0];
+        auto last = end[0];
+        auto incr = (last-curr)/(numElms[0]-1);
+        while (curr <= last) {
+            out.push_back(curr);
+            curr += incr;
+        }
+        return out;
+    }
+    
 }

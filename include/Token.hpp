@@ -39,9 +39,11 @@ enum FunctionType {
     BCTOR,
     INDEX,
     COMPOSE,
-    SIN,
-    COS,
-    TAN,
+    SUM,
+    NORM,
+    SHAPE,
+    RANGE,
+    LINSPACE
 };
 
 struct RawToken {
