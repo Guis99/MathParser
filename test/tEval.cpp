@@ -11,13 +11,6 @@ int main() {
     std::string str; std::string vars;
 
     std::cout<<"Enter expression to evaluate: ";
-    std::getline(std::cin,str);
-    std::cout<<std::endl<<str<<std::endl;
-
-    auto out = ParseText(str);
-    std::cout<<"=> ";
-    out.print();
-    std::cout<<std::endl;
 
     while (true) {
         str = "";
@@ -25,10 +18,16 @@ int main() {
         std::getline(std::cin,str);
         std::cout<<std::endl;
 
-        auto out = ParseText(str);
-        std::cout<<"=> ";
-        out.print();
-        std::cout<<std::endl;
+        try {
+            auto out = ParseText(str);
+            std::cout<<"=> ";
+            out.print();
+            std::cout<<std::endl;
+        }
+        catch (std::exception &except) {
+            std::cerr<<except.what()<<std::endl<<std::endl;
+            continue;
+        }
     }
 
 }

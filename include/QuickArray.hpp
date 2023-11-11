@@ -75,7 +75,7 @@ namespace MathParser {
             }
 
             else {
-                throw IncompatibleArraySizesException("Array sizes are incompatible.");
+                throw IncompatibleArraySizesException();
                 QuickArray<T> defaultreturn;
                 return defaultreturn;
             }
@@ -135,35 +135,22 @@ namespace MathParser {
             return data[idx];
         }
 
-
         private:
         std::vector<T> data;
 
         class IncompatibleArraySizesException : public std::exception {
-        public:
-            IncompatibleArraySizesException(const std::string& message) : message(message) {};
-            const char* what() const noexcept override {
-                return message.c_str();
-            }
+            public:
+                IncompatibleArraySizesException() {
+                    message = "Array sizes are incompatible.";
+                };
+                const char* what() const noexcept override {
+                    return message.c_str();
+                }
 
-        private:
-            std::string message;
-    };
-
+            private:
+                std::string message;
+        };
     };
 }
-
-// namespace MathParser {
-//     class IncompatibleArraySizesException : public std::exception {
-//         public:
-//             IncompatibleArraySizesException(const std::string& message) : message(message) {};
-//             const char* what() const noexcept override {
-//                 return message.c_str();
-//             }
-
-//         private:
-//             std::string message;
-//     };
-// }
 
 #endif

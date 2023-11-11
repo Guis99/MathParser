@@ -7,6 +7,7 @@ typedef MathParser::QuickArray<double> QA;
 typedef double (*mathFunc)(double);
 
 namespace MathParser {
+    // functions
     QA evalMathFunction(QA &input, mathFunc mathFuncToUse) {
         std::vector<double> outvec;
         outvec.reserve(input.size());
@@ -37,9 +38,15 @@ namespace MathParser {
         QA out;
         out.reserve(indexArray.size());
 
+        int offset = 0;
+        auto low = 0; auto high = inArray.size();
+
         for (int i=0; i<indexArray.size(); i++) {
             int idx = (int)(indexArray[i]);
-            out.push_back(inArray[idx]);
+            if (idx - offset >= high || idx - offset < 0) {
+                throw InvalidArrayIndexException();
+            }
+            out.push_back(inArray[idx - offset]);
         }
         return out;
     }

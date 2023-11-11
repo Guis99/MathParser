@@ -24,6 +24,7 @@ std::vector<RawToken> MathParser::TokenizeString(std::string &inputString) {
                                 R"((\[)|(\])|()" +
                                 keywordPattern + R"()|()" +
                                 commaPattern + R"()|()" +
+                                R"(;)" + R"()|()" +
                                 stringPattern + R"())";
     
     // std::cout<<regexString<<std::endl;
@@ -84,9 +85,11 @@ std::vector<std::shared_ptr<Token>> MathParser::TransformTokens(std::vector<RawT
 
                 else if (val == "-") {
                     if (i == 0 || tokens[i-1]->type == TokenType::OPERATOR ||
-                        tokens[i-1]->type == TokenType::OPEN_PAREN) {
+                        tokens[i-1]->type == TokenType::OPEN_PAREN ||
+                        tokens[i-1]->type == TokenType::ASSIGN) {
                         token->oper = OperatorType::NEGATE;
                         token->LH = true;
+                        token->name = "NEGATE";
                         token->precedence = 5;
                     }
                     else {
@@ -216,7 +219,15 @@ std::vector<std::shared_ptr<Token>> MathParser::TransformTokens(std::vector<RawT
                 Token *tok = new Token();
                 std::shared_ptr<Token> token(tok);
                 token->type = TokenType::COMMA;
-                token->name = val;
+                token->name = "SEP";
+                tokens.push_back(token);
+                break;
+            }
+            case TokenType::NEWLINE: {
+                Token *tok = new Token();
+                std::shared_ptr<Token> token(tok);
+                token->type = TokenType::NEWLINE;
+                token->name = "NEWLINE";
                 tokens.push_back(token);
                 break;
             }

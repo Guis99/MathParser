@@ -6,6 +6,10 @@ namespace MathParser {
     std::unordered_map<std::string, mathFunc> mathFunctions;
 }
 
+void MathParser::RunMPEngine() {
+    
+}
+
 QA MathParser::ParseText(std::string inputString) {
     bool isAssign = false; size_t stopIdx = 0;
     auto rawTokens = MathParser::TokenizeString(inputString);

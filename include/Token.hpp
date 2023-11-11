@@ -15,7 +15,8 @@ enum TokenType {
     CLOSE_SQUARE=9,
     KEYWORD=10,
     COMMA=11,
-    IDENTIFIER=12,
+    NEWLINE=12,
+    IDENTIFIER=13,
 };
 
 enum OperatorType {

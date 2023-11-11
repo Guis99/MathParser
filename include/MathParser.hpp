@@ -27,6 +27,9 @@ namespace MathParser {
     QA ParseText(std::string inputString);
     QA EvalExpression(std::string inputString);
     std::vector<QA> EvalReversePolishToks(const std::vector<std::shared_ptr<Token>> &tokens);
+
+    // Run eval engine   
+    void RunMPEngine();
     void SetVariable(std::string variableName, const QA &variableValue);
     void SetVariable(std::string variableName, const QA &&variableValue);
     void InitMaps();
@@ -34,7 +37,22 @@ namespace MathParser {
     // Exceptions
     class UnknownIdentifierException : public std::exception {
         public:
-            UnknownIdentifierException(const std::string& message) : message(message) {}
+            UnknownIdentifierException() {
+                message = "Variable or function does not exist.";
+            }
+            const char* what() const noexcept override {
+                return message.c_str();
+            }
+
+        private:
+            std::string message;
+    };
+
+    class InvalidArrayIndexException : public std::exception {
+        public:
+            InvalidArrayIndexException() {
+                message = "Array index out of bounds.";
+            };
             const char* what() const noexcept override {
                 return message.c_str();
             }
@@ -43,5 +61,6 @@ namespace MathParser {
             std::string message;
     };
 }
+
 
 #endif

@@ -93,7 +93,18 @@ std::vector<std::shared_ptr<Token>> MathParser::ShuntingYard(const std::vector<s
                     break;
                 }
                 else {
-                    throw MathParser::UnknownIdentifierException("Variable or function does not exist");
+                    // throw MathParser::UnknownIdentifierException("Variable or function does not exist");
+                    Variable *var = new Variable();
+                    std::shared_ptr<Variable> varPtr(var);
+                    varPtr->name = idName;
+                    varPtr->type = TokenType::IDENTIFIER;
+                    varPtr->idType = IdentifierType::VARIABLE;
+                    RpnVec.push_back(varPtr);
+                    if (!wereValues.empty()) {
+                        wereValues.pop();
+                        wereValues.push(true);
+                    }
+                    break;
                 }
                 break;
             }
