@@ -4,7 +4,7 @@
 #ifndef TOKEN_PROCESSING
 #define TOKEN_PROCESSING
 
-typedef MathParser::QuickArray<double> QA;
+typedef MathParser::QuickArray::QuickArray<double> QA;
 typedef double (*mathFunc)(double);
 
 namespace MathParser {

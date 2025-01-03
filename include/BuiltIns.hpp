@@ -3,7 +3,7 @@
 #include "Token.hpp"
 #include "QuickArray.hpp"
 
-typedef MathParser::QuickArray<double> QA;
+typedef MathParser::QuickArray::QuickArray<double> QA;
 typedef double (*mathFunc)(double);
 
 namespace MathParser {
