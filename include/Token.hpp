@@ -61,7 +61,7 @@ class Token {
 class Number : public Token {
     public:
     // TokenType type = TokenType::NUMBER;
-    std::shared_ptr<MathParser::QuickArray<double>> value;
+    std::shared_ptr<MathParser::QuickArray::QuickArray<double>> value;
 };
 
 class Operator : public Token {

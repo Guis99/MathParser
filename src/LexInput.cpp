@@ -1,4 +1,4 @@
-#include "..\include\MathParser.hpp"
+#include "../include/MathParser.hpp"
 
 std::string MathParser::GetKeywords() {
     std::string out;

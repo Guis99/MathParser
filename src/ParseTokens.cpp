@@ -1,4 +1,4 @@
-#include "..\include\MathParser.hpp"
+#include "../include/MathParser.hpp"
 
 namespace MathParser {
     std::unordered_map<std::string, FunctionType> functions;
