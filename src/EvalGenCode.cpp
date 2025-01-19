@@ -44,11 +44,11 @@ QA MathParser::ParseText(std::string inputString) {
 
 void MathParser::InitMaps() {
     // Load operators
-    std::function<QA(QA, QA)> add = QA::operator+;
-    std::function<QA(QA, QA)> sub = QA::operator-;
-    std::function<QA(QA, QA)> mult = QA::operator*;
-    std::function<QA(QA, QA)> div = QA::operator/;
-    std::function<QA(QA, QA)> pow = QA::operator^;
+    std::function<QA(QA, QA)> add = MathParser::QuickArray::QuickArrayPlus<double>;
+    std::function<QA(QA, QA)> sub = MathParser::QuickArray::QuickArrayMinus<double>;
+    std::function<QA(QA, QA)> mult = MathParser::QuickArray::QuickArrayMult<double>;
+    std::function<QA(QA, QA)> div = MathParser::QuickArray::QuickArrayDivide<double>;
+    std::function<QA(QA, QA)> pow = MathParser::QuickArray::QuickArrayPower<double>;
 
     MathParser::operators["+"] = add;
     MathParser::operators["-"] = sub;

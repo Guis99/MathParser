@@ -81,11 +81,9 @@ namespace MathParser {
                 }
             }
 
-            static QuickArray<T> operator+(const QuickArray<T>& other);
-            static QuickArray<T> operator-(const QuickArray<T>& other);
-            static QuickArray<T> operator*(const QuickArray<T>& other);
-            static QuickArray<T> operator/(const QuickArray<T>& other);
-            static QuickArray<T> operator^(const QuickArray<T>& other);
+            T operator[](size_t idx) const {
+                return data[idx];
+            }
 
             private:
             std::vector<T> data;
@@ -105,58 +103,58 @@ namespace MathParser {
         };
 
         template <typename T>
-        QuickArray<T> QuickArray<T>::operator+(const QuickArray<T>& other) {
+        QuickArray<T> QuickArrayPlus(const QuickArray<T>& QA1, const QuickArray<T> QA2) {
             QuickArray<T> result;
-            result.reserve(this->size());
+            result.reserve(QA1.size());
 
-            for (size_t i = 0; i < this->size(); i++) {
-                result.push_back((*this)[i] + other[i]);
+            for (size_t i = 0; i < QA1.size(); i++) {
+                result.push_back(QA1[i] + QA2[i]);
             }
             return result;
         }
 
-        static QuickArray<T> operator-(const QuickArray<T>& other) {
+        template <typename T>
+        QuickArray<T> QuickArrayMinus(const QuickArray<T>& QA1, const QuickArray<T> QA2) {
             QuickArray<T> result;
-            result.reserve(this->size());
+            result.reserve(QA1.size());
 
-            for (size_t i = 0; i < this->size(); i++) {
-                result.push_back((*this)[i] - other[i]);
+            for (size_t i = 0; i < QA1.size(); i++) {
+                result.push_back(QA1[i] - QA2[i]);
             }
             return result;
         }
 
-        static QuickArray<T> operator*(const QuickArray<T>& other) {
+        template <typename T>
+        QuickArray<T> QuickArrayMult(const QuickArray<T>& QA1, const QuickArray<T> QA2) {
             QuickArray<T> result;
-            result.reserve(this->size());
+            result.reserve(QA1.size());
 
-            for (size_t i = 0; i < this->size(); i++) {
-                result.push_back((*this)[i] * other[i]);
+            for (size_t i = 0; i < QA1.size(); i++) {
+                result.push_back(QA1[i] * QA2[i]);
             }
             return result;
         }
 
-        static QuickArray<T> operator/(const QuickArray<T>& other) {
+        template <typename T>
+        QuickArray<T> QuickArrayDivide(const QuickArray<T>& QA1, const QuickArray<T> QA2) {
             QuickArray<T> result;
-            result.reserve(this->size());
+            result.reserve(QA1.size());
 
-            for (size_t i = 0; i < this->size(); i++) {
-                result.push_back((*this)[i] / other[i]);
+            for (size_t i = 0; i < QA1.size(); i++) {
+                result.push_back(QA1[i] / QA2[i]);
             }
             return result;
         }
 
-        static QuickArray<T> operator^(const QuickArray<T>& other) {
+        template <typename T>
+        QuickArray<T> QuickArrayPower(const QuickArray<T>& QA1, const QuickArray<T> QA2) {
             QuickArray<T> result;
-            result.reserve(this->size());
+            result.reserve(QA1.size());
 
-            for (size_t i = 0; i < this->size(); i++) {
-                result.push_back(std::pow((*this)[i], other[i]));
+            for (size_t i = 0; i < QA1.size(); i++) {
+                result.push_back(pow(QA1[i], QA2[i]));
             }
             return result;
-        }
-
-        T operator[](size_t idx) const {
-            return data[idx];
         }
     }
 }
