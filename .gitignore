@@ -209,3 +209,5 @@ FodyWeavers.xsd
 *exe
 /Dependencies/**
 *txt
+
+build
