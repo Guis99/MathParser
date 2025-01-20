@@ -10,6 +10,8 @@ void MathParser::RunMPEngine() {
     
 }
 
+using namespace MathParser;
+
 QA MathParser::ParseText(std::string inputString) {
     bool isAssign = false; size_t stopIdx = 0;
     auto rawTokens = MathParser::TokenizeString(inputString);

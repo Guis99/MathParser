@@ -56,6 +56,10 @@ namespace MathParser {
                 std::cout<<*(this->data.end()-1)<<">"<<std::endl;
             }
 
+            std::vector<T> release() {
+                return this->data;
+            }
+
             QuickArray<T> applyBinaryOp(std::function<QuickArray<T>(QuickArray<T>, QuickArray<T>)>& op, QuickArray<T> &other) {
                 int s1 = this->size();
                 int s2 = other.size();
@@ -157,6 +161,8 @@ namespace MathParser {
             return result;
         }
     }
+    typedef QuickArray::QuickArray<double> QA;
+
 }
 
 #endif

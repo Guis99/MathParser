@@ -4,10 +4,10 @@
 #ifndef TOKEN_PROCESSING
 #define TOKEN_PROCESSING
 
-typedef MathParser::QuickArray::QuickArray<double> QA;
 typedef double (*mathFunc)(double);
 
 namespace MathParser {
+
     // Declare all maps
     extern std::unordered_map<std::string, FunctionType> functions;
     extern std::unordered_map<std::string, mathFunc> mathFunctions;
